@@ -111,7 +111,7 @@
                                           <td>Stock ID</td>
                                           <td>Order Quantity</td>
                                           <td>Seller ID</td>
-                                          <td colspan="2" >Action</td>
+                                          <td >Action</td>
                                           <td> Status</td>
                                       </tr>
                                   </thead>
@@ -122,19 +122,20 @@
                                               <td>{{$order->share_id}}</td>
                                               <td>{{$order->quantity}}</td>
                                               <td>{{$order->seller_id}}</td>
-                                              <td><a href="{{route('orders.show',$order->id)}}" class="btn btn-primary">View</a></td>
                                               <td>
                                                   <form action="{{route('orders.destroy',$order->id)}}" method="POST">
                                                       @csrf
                                                       @method('DELETE')
-                                                      @if($order->status!='complete')
+                                                      @if($order->status=='pending')
                                                       <button type="submit" class="btn btn-danger">Cancel</button>
+                                                      @else
+                                                      <a href="{{route('orders.show',$order->id)}}" class="btn btn-primary">View</a>  
                                                       @endif
                                                   </form>
                                                   
                                               </td>
                                               <td>
-                                                  @if($order->status=='approved')
+                                                  @if($order->status=='confirmed')
                                                   <button class="btn btn-success">Approved</button>
                                                   @elseif($order->status=='pending')
                                                   <button class="btn btn-info">Pending</button>
@@ -192,18 +193,23 @@
                                           </tr>
                                       </thead>
                                       <tbody>
-                                          @foreach ($orders  as $order)
+                                          @foreach ($purchases  as $purchase)
                                               <tr>
-                                                  <td>{{$order->id}}</td>
-                                                  <td>{{$order->share_id}}</td>
-                                                  <td>{{$order->quantity}}</td>
-                                                  <td>{{$order->buyer_id}}</td>
-                                                  <td><a href="{{route('orders.show',$order->id)}}" class="btn btn-primary">View</a></td>
-        
+                                                  <td>{{$purchase->id}}</td>
+                                                  <td>{{$purchase->share_id}}</td>
+                                                  <td>{{$purchase->quantity}}</td>
+                                                  <td>{{$purchase->buyer_id}}</td>
                                                   <td>
-                                                      @if($order->status=='approved')
+                                                      @if ($purchase->status=='pending')
+                                                      <a href="{{route('confirm',$purchase->id)}}" class="btn btn-success">Confirm</a> 
+                                                      @else
+                                                      <a href="{{route('orders.show',$purchase->id)}}" class="btn btn-primary">View</a>   
+                                                      @endif
+                                                    </td> 
+                                                  <td>
+                                                      @if($purchase->status=='confirmed')
                                                       <button class="btn btn-success">Approved</button>
-                                                      @elseif($order->status=='pending')
+                                                      @elseif($purchase->status=='pending')
                                                       <button class="btn btn-info">Pending</button>
                                                       @else
                                                       <button class="btn btn-warning">Complete</button>

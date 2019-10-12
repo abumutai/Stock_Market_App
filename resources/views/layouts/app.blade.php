@@ -24,7 +24,7 @@
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    {{ config('app.name', 'Stock App') }}
+                  Stock App 
                 </a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
@@ -49,6 +49,11 @@
                                 </li>
                             @endif
                         @else
+                        <a class="p-2 text-dark" href="{{ url('/shares') }}">Home</a>
+                        <a class="p-2 text-dark" href="{{ url('/home') }}"> Shares</a>
+                            <li class="nav-item">
+                            <a class="nav-link danger" href="{{route('notifications.index')}}">Notifications ({{$notificatio->where('user_id',Auth::user()->id)->count()}})</a> 
+                             </li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }} <span class="caret"></span>

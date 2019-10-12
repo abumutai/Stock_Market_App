@@ -17,10 +17,12 @@ Route::get('/', 'WelcomeController@index')->name('welcome');
 Route::resource('shares','ShareController');
 
 Route::resource('orders','OrderController');
+Route::get('/confirm/{id}','ShareController@confirm')->name('confirm');
 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::resource('notifications','NotificationsController');
 
 
 

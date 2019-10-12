@@ -25,7 +25,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $shares=Share::All();
+        $shares=Share::all()->where('share_qty','>','0');
         return view('home',compact('shares'));
     }
 }

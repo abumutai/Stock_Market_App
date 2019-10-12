@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Share;
 use App\Order;
 use App\User;
+use App\Notification;
+use Auth;
+use View;
 class ShareController extends Controller
 {
     /**
@@ -18,10 +21,14 @@ class ShareController extends Controller
         $this->middleware('auth');
     }
     public function index()
-    {
+    { 
+    
+        $user=auth()->user()->id;
+        
+        $purchases=Order::all()-> where('seller_id',$user);
         $orders=auth()->user()->orders()->get();
-        $shares=auth()->user()->shares()->get();
-        return view('/shares/index',compact('shares','orders'));
+        $shares=auth()->user()->shares()->get()-> where('share_qty','>','0');
+        return view('/shares/index',compact('shares','orders','purchases'));  
     }
 
     /**
@@ -126,5 +133,12 @@ class ShareController extends Controller
         $shares=Share::find($id);
         
         return view('shares.view',compact('shares'));
+    }
+    public function confirm($id){
+        Order::where('id',$id)->update(array('status'=>'confirmed'));
+        $order=  Order::where('id',$id)->first();
+        $notification= 'Your order: '.$order->id. 'has been confirmed!';
+            Notification::create(array('order_id'=>$id,'share_id'=>$order->share_id,'user_id'=>$order->buyer_id,'notification'=>$notification));
+        return redirect('/shares')->with('success','Order confirmed successfully');
     }
 }

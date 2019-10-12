@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Order;
 use App\Share;
+use App\Notification;
 
 class OrderController extends Controller
 {
@@ -44,9 +45,11 @@ class OrderController extends Controller
         $request->validate([
             'quantity'=>'integer|required'
         ]);
+
         $id=$request->get('share_id');
         $available=$request->get('available_qty');
         $quantity=$request->get('quantity');
+
         if($available>=$quantity){
         $order=new Order([
         'share_id'=>$request->get('share_id'),
@@ -56,9 +59,20 @@ class OrderController extends Controller
         'status'=>'pending'
         ]);
        $new_qty=$available-$quantity;
+       
         $order->save();
+        $seller_id= $request->get('seller_id');
         $share_id= $request->get('share_id');
-        Share::where('id',$share_id)->update(array('share_qty'=>$new_qty));
+        if($new_qty===0){
+            Share::where('id',$share_id)->delete();
+        
+           }
+        else{
+            Share::where('id',$share_id)->update(array('share_qty'=>$new_qty));
+        }
+      
+        $notification= 'Your have a new request for stock: '.$share_id. '!';
+            Notification::create(array('order_id'=>$order->id,'share_id'=>$share_id,'user_id'=>$seller_id,'notification'=>$notification));
         return redirect('/shares')-> with('success','purchase request  successfully!! Please wait for seller to respond');
     }
     else{
